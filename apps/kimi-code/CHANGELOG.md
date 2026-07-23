@@ -1,5 +1,41 @@
 # @moonshot-ai/kimi-code
 
+## 0.30.0
+
+### Minor Changes
+
+- [#2065](https://github.com/MoonshotAI/kimi-code/pull/2065) [`527d485`](https://github.com/MoonshotAI/kimi-code/commit/527d485d9296fe20f473a4a578d9e6a499c20cd9) Thanks [@7Sageer](https://github.com/7Sageer)! - Add global default MCP server timeouts in `config.toml` and env vars.
+
+- [#2021](https://github.com/MoonshotAI/kimi-code/pull/2021) [`64f053c`](https://github.com/MoonshotAI/kimi-code/commit/64f053cf46c6d8a50d529d15bc3f2f4fc88cea8f) Thanks [@sailist](https://github.com/sailist)! - Extend the transcript protocol with step usage and timing, streamed tool input and progress, subagent outcomes, agent status, and the prompt queue; WebSocket connections subscribed to the transcript protocol no longer receive the equivalent legacy session events.
+
+- [#2094](https://github.com/MoonshotAI/kimi-code/pull/2094) [`d751b67`](https://github.com/MoonshotAI/kimi-code/commit/d751b6796c6e9c4b29356d00d0a84678f24f3cb5) Thanks [@sailist](https://github.com/sailist)! - Add a server endpoint to look up the plan content and review outcome of ExitPlanMode calls. Query `GET /api/v1/sessions/{session_id}/transcript/plan` with `agent_id`, plus an optional `tool_call_id` to narrow to one call.
+
+- [#2094](https://github.com/MoonshotAI/kimi-code/pull/2094) [`d751b67`](https://github.com/MoonshotAI/kimi-code/commit/d751b6796c6e9c4b29356d00d0a84678f24f3cb5) Thanks [@sailist](https://github.com/sailist)! - Move transcript stream subscriptions on the server WebSocket protocol to a dedicated `subscribe_v2` control frame paired with an agent-grained `unsubscribe_v2`; the `transcript` and `transcript_since` fields on `client_hello` and `subscribe` are no longer accepted.
+
+- [#2021](https://github.com/MoonshotAI/kimi-code/pull/2021) [`64f053c`](https://github.com/MoonshotAI/kimi-code/commit/64f053cf46c6d8a50d529d15bc3f2f4fc88cea8f) Thanks [@sailist](https://github.com/sailist)! - Add a session API endpoint that returns all turn-opening user messages of a session, grouped per agent. Query `GET /api/v1/sessions/{session_id}/transcript/user-messages` (optionally with `?agent_id=` for a single agent) to fetch them.
+
+- [#2096](https://github.com/MoonshotAI/kimi-code/pull/2096) [`5fdbdb4`](https://github.com/MoonshotAI/kimi-code/commit/5fdbdb4a22b86ae6f7ba7c775741689aaaf215f0) Thanks [@7Sageer](https://github.com/7Sageer)! - Add environment variables to configure the web search and web fetch services without OAuth login.
+
+### Patch Changes
+
+- [#2017](https://github.com/MoonshotAI/kimi-code/pull/2017) [`c6291c3`](https://github.com/MoonshotAI/kimi-code/commit/c6291c3ad71358c0e18b82c76056561235e321e9) Thanks [@sailist](https://github.com/sailist)! - Align `kimi -p` on the experimental engine with the default engine's run lifecycle: the print background policy now defaults to steer with no practical turn or time cap, background task and per-turn step limits are lifted unless configured, and the run stays alive while cron tasks still have future fires so their steered turns can run.
+
+- [#2068](https://github.com/MoonshotAI/kimi-code/pull/2068) [`188c0fc`](https://github.com/MoonshotAI/kimi-code/commit/188c0fcbf7c884d4a86bd4eebd012b0ab7aeb5da) Thanks [@sailist](https://github.com/sailist)! - Decouple provider and model management from config persistence on the experimental engine: the runtime keeps its own provider/model registry, and a dedicated sync layer hydrates it from config.toml at startup and writes runtime changes (added providers, discovered models, default-model selection) back to disk.
+
+- [#2021](https://github.com/MoonshotAI/kimi-code/pull/2021) [`64f053c`](https://github.com/MoonshotAI/kimi-code/commit/64f053cf46c6d8a50d529d15bc3f2f4fc88cea8f) Thanks [@sailist](https://github.com/sailist)! - Record plan content as versioned facts: each plan review submission offloads the document to a versioned per-agent plan directory and journals a reference record, so the transcript surfaces plan revisions (marker + badge with review path) and rebuilds them after restarts.
+
+- [#2104](https://github.com/MoonshotAI/kimi-code/pull/2104) [`66f611a`](https://github.com/MoonshotAI/kimi-code/commit/66f611aae99887ad2076aa3482a0df5e415d3511) Thanks [@RealKai42](https://github.com/RealKai42)! - Fix loss of thinking content with OpenAI-compatible endpoints that return reasoning under a different field name (e.g. newer vLLM); the reasoning field is now detected per endpoint and echoed back on follow-up requests.
+
+- [#2089](https://github.com/MoonshotAI/kimi-code/pull/2089) [`ca38b7e`](https://github.com/MoonshotAI/kimi-code/commit/ca38b7ed864ad5fa2b2e3c8b96d8a7b10a734445) Thanks [@liruifengv](https://github.com/liruifengv)! - Remove the toolbar tip that suggested trying the "superpowers" plugin.
+
+- [#2094](https://github.com/MoonshotAI/kimi-code/pull/2094) [`d751b67`](https://github.com/MoonshotAI/kimi-code/commit/d751b6796c6e9c4b29356d00d0a84678f24f3cb5) Thanks [@sailist](https://github.com/sailist)! - Push every session's work status (busy, pending interaction, last turn outcome) to all connected WebSocket clients without requiring a per-session subscription, and serve the same aggregate on the session list API.
+
+- [#2021](https://github.com/MoonshotAI/kimi-code/pull/2021) [`64f053c`](https://github.com/MoonshotAI/kimi-code/commit/64f053cf46c6d8a50d529d15bc3f2f4fc88cea8f) Thanks [@sailist](https://github.com/sailist)! - Stop embedding historical turns in the transcript WS baseline reset; it now carries only global state and the stream watermark, and clients page history through the REST transcript API.
+
+- [#2094](https://github.com/MoonshotAI/kimi-code/pull/2094) [`d751b67`](https://github.com/MoonshotAI/kimi-code/commit/d751b6796c6e9c4b29356d00d0a84678f24f3cb5) Thanks [@sailist](https://github.com/sailist)! - Decouple the transcript WebSocket stream from the legacy agent filter: transcript frames are now governed by the per-agent transcript grades alone, so a connection no longer silently drops transcript data for agents missing from its event allowlist.
+
+- [#2021](https://github.com/MoonshotAI/kimi-code/pull/2021) [`64f053c`](https://github.com/MoonshotAI/kimi-code/commit/64f053cf46c6d8a50d529d15bc3f2f4fc88cea8f) Thanks [@sailist](https://github.com/sailist)! - Persist task lifecycle and interaction records in session wire journals, and rebuild tasks, interactions, todos, and goal/plan meta when loading a cold transcript, so transcript state survives server restarts (older sessions are unaffected).
+
 ## 0.29.0
 
 ### Minor Changes
